@@ -47,9 +47,10 @@ async function exportAsHTML(results, outputFile) {
   for (const article of results) {
     html += `
       <section style=\"margin-bottom: 40px;\">
-        <h2><a href=\"${article.url}\">${article.title}</a></h2>
+        <h2>${article.title} - ${article.url}</h2>
         ${article.content}
       </section>
+			<hr>
     `;
   }
 
