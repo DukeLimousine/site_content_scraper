@@ -104,12 +104,18 @@ async function scrapeAndSave(urls, outputFileBase) {
 }
 
 // Example usage: fetch sitemap, filter URLs, and start scraping/exporting
-const sitemapUrl = 'http://forafinancial.local:4000/sitemap.xml';
-getSitemapUrls(sitemapUrl).then(urls => {
-  const excludedStrings = ['/blog/', '/case-studies/', '/browserconfig.xml'];
-  console.log('Found URLs:', urls.length);
-  console.log("filtering /blog/ and /case-studies/");
-  let filteredUrls = urls.filter(url => url && !excludedStrings.some(str => url.includes(str)));
-  console.log('Found URLs:', filteredUrls.length);
-  scrapeAndSave(filteredUrls, `Fora_Financial_${Date.now()}`);
-});
+(async () => {
+  try {
+    const sitemapUrl = 'http://forafinancial.local:4000/sitemap.xml';
+    const urls = await getSitemapUrls(sitemapUrl);
+    const excludedStrings = ['/blog/', '/case-studies/', '/browserconfig.xml'];
+    console.log('Found URLs:', urls.length);
+    console.log("filtering /blog/ and /case-studies/");
+    let filteredUrls = urls.filter(url => url && !excludedStrings.some(str => url.includes(str)));
+    console.log('Found URLs:', filteredUrls.length);
+    await scrapeAndSave(filteredUrls, `Fora_Financial_${Date.now()}`);
+  } catch (err) {
+    console.error('Script failed with error:', err);
+    process.exit(1);
+  }
+})();
