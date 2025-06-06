@@ -103,8 +103,21 @@ async function scrapeAndSave(urls, outputFileBase) {
   await exportAsHTML(results, `${outputFileBase}.html`);
 }
 
-// Example usage: fetch sitemap, filter URLs, and start scraping/exporting
-(async () => {
+// Process command line file of urls
+if (process.argv[2]) {
+  console.log(`Processing file: ${process.argv[2]}`);
+  try {
+    const urlFile = process.argv[2];
+    const fileContent = await fs.readFile(urlFile, 'utf-8');
+    const urls = fileContent.split(',').map(url => url.trim()).filter(url => url);
+    console.log('Found URLs:', urls.length);
+    await scrapeAndSave(urls, `Fora_Financial_${Date.now()}`);
+  } catch (err) {
+    console.error('Failed to read URL file:', err);
+    process.exit(1);
+  }
+} else {
+  // fetch sitemap, filter URLs, and start scraping / exporting
   try {
     const sitemapUrl = 'http://forafinancial.local:4000/sitemap.xml';
     const urls = await getSitemapUrls(sitemapUrl);
@@ -118,4 +131,4 @@ async function scrapeAndSave(urls, outputFileBase) {
     console.error('Script failed with error:', err);
     process.exit(1);
   }
-})();
+}
